@@ -14,14 +14,13 @@ int compare(const void *a, const void *b) {
     return strcmp(ia, ib);
 }
 
-void printTree(const char *basePath, const int root) {
+void printTree(const char *basePath, int root, char *prefix) {
     char path[1000];
     struct dirent *dp;
     struct stat statbuf;
     DIR *dir = opendir(basePath);
 
-    if (!dir)
-        return;
+    if (!dir) return;
 
     char **entries = NULL;
     int n = 0;
@@ -32,23 +31,31 @@ void printTree(const char *basePath, const int root) {
             entries[n++] = strdup(dp->d_name);
         }
     }
-
     qsort(entries, n, sizeof(char *), compare);
 
     for (int i = 0; i < n; i++) {
-        strcpy(path, basePath);
-        strcat(path, "/");
-        strcat(path, entries[i]);
+        snprintf(path, sizeof(path), "%s/%s", basePath, entries[i]);
 
         if (lstat(path, &statbuf) == -1) {
             perror("lstat");
             continue;
         }
 
-        printf("|%*s%s\n", root * 4, "", entries[i]);
+        char newPrefix[1024];
+        if (i < n - 1) {
+            snprintf(newPrefix, sizeof(newPrefix), "%s│   ", prefix);
+        } else {
+            snprintf(newPrefix, sizeof(newPrefix), "%s    ", prefix);
+        }
+
+        if (root > 0) {
+            printf("%s|-- %s\n", prefix, entries[i]);
+        } else {
+            printf("%s\n", entries[i]);
+        }
 
         if (S_ISDIR(statbuf.st_mode)) {
-            printTree(path, root + 1);
+            printTree(path, root + 1, newPrefix);
         }
 
         free(entries[i]);
@@ -63,7 +70,7 @@ int main(int argc, char *argv[]) {
     char *basePath = argc > 1 ? argv[1] : ".";
 
     printf("%s\n", basePath);
-    printTree(basePath, 0);
+    printTree(basePath, 0, "");
 
 
 	return 0;
