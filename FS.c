@@ -32,33 +32,7 @@ void printTree(const char *basePath, const int root) {
         }
     }
 
-<<<<<<< HEAD
-int cmpfun(const void *a, const void *b){
-	const char *name1 = (*(const struct dirent **)a)->d_name;
-	const char *name2 = (*(const struct dirent **)b)->d_name;
-		return strcmp(name1, name2);
-}
-
-void print_tree(const char *dir_path, int level){
-	DIR *dir;
-	struct dirent *entry;
-	struct dirent **namelist;
-
-	int n;
-
-	dir = opendir(dir_path);
-
-	if(!dir){
-		perror("Error Opening directory");
-		return;
-	}
-
-	//n = scandir(dir_path, &namelist, NULL, cmpfun);
-
-}
-=======
     qsort(entries, n, sizeof(char *), compare);
->>>>>>> df04400a5acb7764904356b9ccddfd1817d4ce7d
 
     for (int i = 0; i < n; i++) {
         strcpy(path, basePath);
@@ -84,18 +58,12 @@ void print_tree(const char *dir_path, int level){
 }
 
 int main(int argc, char *argv[]) {
-<<<<<<< HEAD
-	//read UserInput for Directory
-	char *dir_path = (argc == 2) ? argv[1] : ".";
-=======
 	
     char *basePath = argc > 1 ? argv[1] : ".";
 
     printf("%s\n", basePath);
     printTree(basePath, 0);
->>>>>>> df04400a5acb7764904356b9ccddfd1817d4ce7d
 
-	printf("%s", dir_path);
 
 	return 0;
 }
